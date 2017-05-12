@@ -149,8 +149,6 @@ public class SqlOperation {
     }
 
     public void setFlagaUpdate() {
-
-
         Cursor cursor;
         String select = "SELECT * FROM "+TABLE_NAME_ORDERITEM +" where "+ COLUMN_NAME_FLAG + " = 1"   ;
         cursor = database.rawQuery(select, null);

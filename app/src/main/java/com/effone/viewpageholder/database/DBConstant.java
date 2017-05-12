@@ -19,9 +19,9 @@ public class DBConstant {
     public static final String COLUMN_NAME_ITEM_QTY = "item_qty";
     public static final String COLUMN_NAME_FLAG = "flag";
     public static final String COLUMN_NAME_ID = "_id";
-    public static double serviceTax=06.00;
-    public static double vatTax=12.00;
-    public static double ser=05.00;
+    public static final double serviceTax=06.00;
+    public static final double vatTax=12.00;
+    public static final double ser=05.00;
 
 
     public static final String CREATE_ORDERITEM= "CREATE TABLE "+TABLE_NAME_ORDERITEM

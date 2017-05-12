@@ -28,8 +28,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import static com.effone.viewpageholder.common.URL.menu_url;
+
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener,UpdateableInterface,OnDataChangeListener,OnHandClickInterface {
-        String url="http://192.168.2.44/android_web_api/Sample.json";
+
     private String mJson;
     private Gson mGson;
     private RequestQueue mQueue;
@@ -51,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mGson = new Gson();
         mQueue = Volley.newRequestQueue(this);
         showOrderItems();
-        StringRequest stringRequest = new StringRequest(url,
+        StringRequest stringRequest = new StringRequest(menu_url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
