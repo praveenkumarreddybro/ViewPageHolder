@@ -67,15 +67,15 @@ public class PlaceOrderActivity extends AppCompatActivity implements View.OnClic
 
     SqlOperation sqlOperation;
     ArrayList<CartItems> cartItemses;
-
+    float totalCount = 0;
+    int totalPrice = 0;
     private void showOrderItems() {
 
         sqlOperation = new SqlOperation(this);
         sqlOperation.open();
         cartItemses = sqlOperation.getCartItems(1);
 
-        float totalCount = 0;
-        int totalPrice = 0;
+
         sqlOperation.close();
         for (int i = 0; i < cartItemses.size(); i++) {
             totalCount += cartItemses.get(i).getItemQuantity();
@@ -132,8 +132,8 @@ public class PlaceOrderActivity extends AppCompatActivity implements View.OnClic
                 orderToServer.setLocationId(22);
                 orderToServer.setRestaurant_id(555);
                 orderToServer.setOrder_id("");
-                orderToServer.setTable_no(6);
-                orderToServer.setTotal_price(345.00);
+                orderToServer.setTable_no(Integer.parseInt(mTableName));
+                orderToServer.setTotal_price(totalPrice);
                 ArrayList<OrderingMenu> orderingMenus=new ArrayList<>();
                 for (CartItems cartItems:cartItemses) {
                     orderingMenus.add(new OrderingMenu(cartItems.getItemMenuCatId(),cartItems.ItemQuantity));

@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Stream;
-
 import static com.effone.viewpageholder.database.DBConstant.COLUMN_NAME_CAT_NAME;
 import static com.effone.viewpageholder.database.DBConstant.COLUMN_NAME_FLAG;
 import static com.effone.viewpageholder.database.DBConstant.COLUMN_NAME_ID;
@@ -61,7 +59,7 @@ public class SqlOperation {
             List<HashMap<String, String>> allElementsDictionary = new ArrayList<>();
 
             Cursor cursor;
-            String select = "SELECT item_qty,_id FROM "+TABLE_NAME_ORDERITEM +" where " + COLUMN_NAME_CAT_NAME + "= '" + item_cat +
+            String select = "SELECT item_qty FROM "+TABLE_NAME_ORDERITEM +" where " + COLUMN_NAME_CAT_NAME + "= '" + item_cat +
                     "' and " + COLUMN_NAME_MENU_ITEM_ID + "=" + menu_item_id +" and " + COLUMN_NAME_FLAG +" = " +flag +"" ;
             cursor = database.rawQuery(select, null);
             if (cursor.getCount() == 0 && kindOfOperation == 1) // if there are no elements and the operation is ADD , set QTY in  1
@@ -83,7 +81,7 @@ public class SqlOperation {
                 //this means the product exist with some qty
                 cursor.moveToFirst();
                 int oldQty = Integer.parseInt(cursor.getString(0));//get the qty from Database
-                int idSum = Integer.parseInt(cursor.getString(1));//get the id from database
+//                int idSum = Integer.parseInt(cursor.getString(1));//get the id from database
                 ContentValues row = new ContentValues();
 
                 switch (kindOfOperation) {
@@ -161,7 +159,7 @@ public class SqlOperation {
         }
     }
 
-    public ArrayList<Order_Items> getItemName(String[] values) {
+    public ArrayList<Order_Items> getItemName(String[] values,String order_id) {
         String whereClouse;
         int[] numbers = new int[values.length];
         for(int i = 0;i < values.length;i++)
@@ -171,8 +169,7 @@ public class SqlOperation {
             // and another index for the numbers if to continue adding the others
             numbers[i] = Integer.parseInt(values[i]);
         }
-        /*inClause = inClause.replace("[", "(");
-        inClause = inClause.replace("]", ")");*/
+
         ArrayList<Order_Items> cartItemses = new ArrayList<>();
         Cursor cursor;
         StringBuilder s=new StringBuilder();
@@ -190,19 +187,40 @@ public class SqlOperation {
 
 
 
-        String select = "SELECT " + COLUMN_NAME_ITEM_NAME + " ," + COLUMN_NAME_ITEM_PRICE + " , "+ COLUMN_NAME_ITEM_QTY +"  FROM " + TABLE_NAME_ORDERITEM + " WHERE " + COLUMN_NAME_MENU_ITEM_ID + " IN " + whereClouse+";";
+        String select = "SELECT * from " + TABLE_NAME_ORDERITEM + " Where " + COLUMN_NAME_MENU_ITEM_ID + " IN " +whereClouse + " and " + COLUMN_NAME_FLAG + " = " + Integer.parseInt(order_id);
+        try{
         cursor = database.rawQuery(select, null);
         if (cursor.getCount() == 0) // if there are no elements do nothing
         {
             Log.d(TAG, "no elements");
         } else { //if there are elemnts
+            while (cursor.moveToNext()) {
             Order_Items order_items=new Order_Items();
+
+
+
             order_items.setName(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_ITEM_NAME)));
             order_items.setPrice(cursor.getFloat(cursor.getColumnIndex(COLUMN_NAME_ITEM_PRICE)));
             order_items.setQuantity(cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_ITEM_QTY)));
             cartItemses.add(order_items);
+            }
+        }
+        } catch (Exception e){
+            Log.e("SqlOperation",e.getMessage());
         }
         return cartItemses;
+    }
+
+
+    public void setOrderFlagsUpdate(int order_id) {
+        Cursor cursor;
+        String select = "SELECT * FROM "+TABLE_NAME_ORDERITEM +" where "+ COLUMN_NAME_FLAG + " = 2"   ;
+        cursor = database.rawQuery(select, null);
+        if(cursor.getCount()>0) {
+            ContentValues row = new ContentValues();
+            row.put(COLUMN_NAME_FLAG, order_id);//substract -1 if the qty is greater than 0,
+            database.update(TABLE_NAME_ORDERITEM, row, COLUMN_NAME_FLAG+" = 2" , null); //update qty DB the request
+        }
     }
 
 }
