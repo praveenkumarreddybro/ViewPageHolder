@@ -17,6 +17,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.effone.viewpageholder.adapter.MenuItemSummeryListAdapter;
+import com.effone.viewpageholder.common.AppPrefernces;
 import com.effone.viewpageholder.common.OnDataChangeListener;
 import com.effone.viewpageholder.database.SqlOperation;
 import com.effone.viewpageholder.model.CartItems;
@@ -39,11 +40,12 @@ public class PlaceOrderActivity extends AppCompatActivity implements View.OnClic
     private TextView mTvPlaceOrder;
     private EditText mEtTableNo;
     private ListView mLvItemSummary;
-
+    private AppPrefernces appPrefernces;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_cart);
+        appPrefernces=new AppPrefernces(this);
         decalartion();
     }
 
@@ -55,8 +57,6 @@ public class PlaceOrderActivity extends AppCompatActivity implements View.OnClic
         mTvPlaceOrder = (TextView) findViewById(R.id.tv_place_order);
         mEtTableNo = (EditText) findViewById(R.id.et_table_no);
         mLvItemSummary = (ListView) findViewById(R.id.item_summery_list);
-
-
         mTvPlaceOrder.setOnClickListener(this);
         setValuesInto();
     }
@@ -131,7 +131,10 @@ public class PlaceOrderActivity extends AppCompatActivity implements View.OnClic
                 OrderToServer orderToServer= new OrderToServer();
                 orderToServer.setLocationId(22);
                 orderToServer.setRestaurant_id(555);
-                orderToServer.setOrder_id("");
+                if(appPrefernces.getORDER_ID() != null)
+                orderToServer.setOrder_id(appPrefernces.getORDER_ID());
+                else
+                    orderToServer.setOrder_id("");
                 orderToServer.setTable_no(Integer.parseInt(mTableName));
                 orderToServer.setTotal_price(totalPrice);
                 ArrayList<OrderingMenu> orderingMenus=new ArrayList<>();

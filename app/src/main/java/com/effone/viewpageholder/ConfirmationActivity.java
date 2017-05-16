@@ -59,7 +59,10 @@ public class ConfirmationActivity extends AppCompatActivity {
     private String urls;
     private OrderSummary[] mOrderToServers;
     private AppPrefernces mAppPrefernces;
-
+    SqlOperation sqlOperation;
+    private OrderItemDetailsAdapter orderItemDetails;
+    private ArrayList<TaxItems> taxItemses;
+    private TaxDetailsAdapter taxDetailsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +79,7 @@ public class ConfirmationActivity extends AppCompatActivity {
             mStatus = myJson.getString("msg");
             order_id = myJson.getString("order_id");
             urls = get_placed_order + order_id;
+            mAppPrefernces.setORDER_ID(order_id);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -140,54 +144,56 @@ public class ConfirmationActivity extends AppCompatActivity {
         mAppPrefernces.setORDER_ID(mOrderToServers[0].getOrder_id());
         mTvBookingId.setText(": " + mOrderToServers[0].getOrder_id());
         mTvOrderTotal.setText(": $ " + mOrderToServers[0].getTotal_price());
-        mTvStatus.setText(": "+mOrderToServers[0].getStatus());
+        mTvStatus.setText(": " + mOrderToServers[0].getStatus());
         showingDataIntoListView();
     }
 
-    SqlOperation sqlOperation;
-    private OrderItemDetailsAdapter orderItemDetails;
-
+    double totalPrice=0;
     private void showingDataIntoListView() {
-        sqlOperation = new SqlOperation(this);
-        sqlOperation.open();
+
+        sqliteoperation.open();
         String[] values = new String[mOrderToServers[0].getItems_values().length];
         for (int i = 0; i < values.length; i++) {
             values[i] = mOrderToServers[0].getItems_values()[i].getItem_id();
         }
-        sqlOperation.setOrderFlagsUpdate(Integer.parseInt(order_id));
-        ArrayList<Order_Items> order_itemses = sqlOperation.getItemName(values,order_id);
+        sqliteoperation.setOrderFlagsUpdate(Integer.parseInt(order_id));
+        ArrayList<Order_Items> order_itemses = sqliteoperation.getItemName(values, order_id);
 
-        sqlOperation.close();
+        sqliteoperation.close();
         mTvDescription.setText(": " + mOrderToServers[0].getDatatime());
         mTvTableNo.setText(": " + mOrderToServers[0].getTable_no());
 
-        int quantity=0;
-        for (int i = 0; i <order_itemses.size() ; i++) {
-            quantity+=order_itemses.get(i).getQuantity();
+        int quantity = 0;
+
+        for (int i = 0; i < order_itemses.size(); i++) {
+            quantity += order_itemses.get(i).getQuantity();
+            totalPrice +=order_itemses.get(i).getPrice()*quantity;
         }
 
         mTvQuantits.setText(": " + quantity);
         orderItemDetails = new OrderItemDetailsAdapter(this, R.layout.order_summary_items, order_itemses);
         mLvItemQuantity.setAdapter(orderItemDetails);
         populatingTaxMenuList();
-        
+
     }
-    ArrayList<TaxItems> taxItemses;
-    TaxDetailsAdapter taxDetailsAdapter;
+
+
+
     private void populatingTaxMenuList() {
+
         taxItemses = new ArrayList<TaxItems>();
-        TaxItems res1 = new TaxItems("Total before Tax", Double.parseDouble(mOrderToServers[0].getTotal_price()));
+        TaxItems res1 = new TaxItems("Total before Tax", totalPrice);
         TaxItems res2 = new TaxItems("Service Charges", serviceTax);
-        TaxItems res3 = new TaxItems("Service Tax",ser);
+        TaxItems res3 = new TaxItems("Service Tax", ser);
         TaxItems res4 = new TaxItems("VAT Tax", vatTax);
         taxItemses.add(res1);
         taxItemses.add(res2);
         taxItemses.add(res3);
         taxItemses.add(res4);
-        taxDetailsAdapter=new TaxDetailsAdapter(this,R.layout.tax_items,taxItemses);
+        taxDetailsAdapter = new TaxDetailsAdapter(this, R.layout.tax_items, taxItemses);
         mLvTaxQuality.setAdapter(taxDetailsAdapter);
-        double sum=Double.parseDouble(mOrderToServers[0].getTotal_price())+serviceTax+ser+vatTax;
-        mTvTotalPrice.setText("$ "+sum);
+        double sum = Double.parseDouble(mOrderToServers[0].getTotal_price()) + serviceTax + ser + vatTax;
+        mTvTotalPrice.setText("$ " + sum);
     }
 
 }

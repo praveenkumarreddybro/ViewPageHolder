@@ -22,6 +22,15 @@ public class OrderSummary {
     private String table_no;
 
     private String total_price;
+    private  String flag;
+
+    public String getFlag() {
+        return flag;
+    }
+
+    public void setFlag(String flag) {
+        this.flag = flag;
+    }
 
     public String getId ()
     {

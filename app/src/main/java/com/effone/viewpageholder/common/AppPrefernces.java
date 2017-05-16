@@ -21,11 +21,13 @@ public class AppPrefernces {
     private String RESTAURANT_NAME="rest_name";
 
     public String getORDER_ID() {
-        return ORDER_ID;
+
+        return sharedPrefs.getString(ORDER_ID, "");
     }
 
-    public void setORDER_ID(String ORDER_ID) {
-        this.ORDER_ID = ORDER_ID;
+    public void setORDER_ID(String order_id) {
+        prefsEditor.putString(ORDER_ID, order_id);
+        prefsEditor.commit();
     }
 
     private  String TANLE_NAME="table_name";
