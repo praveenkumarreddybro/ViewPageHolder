@@ -9,6 +9,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.effone.viewpageholder.adapter.MenuItemSummeryListAdapter;
 import com.effone.viewpageholder.common.OnDataChangeListener;
 import com.effone.viewpageholder.database.SqlOperation;
@@ -19,7 +26,10 @@ import com.effone.viewpageholder.model.TaxItems;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import static com.effone.viewpageholder.common.URL.place_order_url;
 import static com.effone.viewpageholder.database.DBConstant.ser;
 import static com.effone.viewpageholder.database.DBConstant.serviceTax;
 import static com.effone.viewpageholder.database.DBConstant.vatTax;
@@ -117,19 +127,22 @@ public class PlaceOrderActivity extends AppCompatActivity implements View.OnClic
                 sqlOperation.open();
                 sqlOperation.setFlagaUpdate();
                 sqlOperation.close();
+                ArrayList<OrderToServer> orderToServers= new ArrayList<>();
                 OrderToServer orderToServer= new OrderToServer();
-                orderToServer.setLocationId("LOC000001");
-                orderToServer.setRestaurant_id("SYD00045");
-                orderToServer.setOrder_id("SY56002019914");
+                orderToServer.setLocationId(22);
+                orderToServer.setRestaurant_id(555);
+                orderToServer.setOrder_id("");
                 orderToServer.setTable_no(6);
+                orderToServer.setTotal_price(345.00);
                 ArrayList<OrderingMenu> orderingMenus=new ArrayList<>();
                 for (CartItems cartItems:cartItemses) {
                     orderingMenus.add(new OrderingMenu(cartItems.getItemMenuCatId(),cartItems.ItemQuantity));
                 }
                 orderToServer.setItems(orderingMenus);
+                orderToServers.add(orderToServer);
                 Gson gson= new Gson();
-                String json=gson.toJson(orderToServer);
-                pushDataToServer(orderToServer);
+                String json=gson.toJson(orderToServers);
+                pushDataToServer(json);
 
             } else {
                 Toast.makeText(this, "Please enter the Table no", Toast.LENGTH_SHORT).show();
@@ -138,9 +151,46 @@ public class PlaceOrderActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void pushDataToServer(OrderToServer mTableName) {
+    private void pushDataToServer(final String mTableName) {
+        StringRequest req = new StringRequest(Request.Method.POST, place_order_url ,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        String value = response;
+                        if (!value.equals("")) {
+                            Toast.makeText(PlaceOrderActivity.this," "+response,Toast.LENGTH_LONG).show();
+                            Intent intent=new Intent(PlaceOrderActivity.this,ConfirmationActivity.class);
+                            intent.putExtra("Order_id",response);
+                            startActivity(intent);
+                        }
 
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(PlaceOrderActivity.this," "+error,Toast.LENGTH_LONG).show();
+            }
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return mTableName.getBytes();
+            }
 
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json");
+
+                return headers;
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(req);
     }
 
     @Override

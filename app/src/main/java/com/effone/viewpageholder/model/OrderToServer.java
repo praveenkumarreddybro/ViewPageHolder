@@ -7,27 +7,34 @@ import java.util.ArrayList;
  */
 
 public class OrderToServer {
-    private String locationId;
-    private String restaurant_id;
+    private int locationId;
+    private int restaurant_id;
     private int table_no;
     private String order_id;
+    private double total_price;
     private ArrayList<OrderingMenu> Items;
 
+    public double getTotal_price() {
+        return total_price;
+    }
 
+    public void setTotal_price(double total_price) {
+        this.total_price = total_price;
+    }
 
-    public String getLocationId() {
+    public int getLocationId() {
         return locationId;
     }
 
-    public void setLocationId(String locationId) {
+    public void setLocationId(int locationId) {
         this.locationId = locationId;
     }
 
-    public String getRestaurant_id() {
+    public int getRestaurant_id() {
         return restaurant_id;
     }
 
-    public void setRestaurant_id(String restaurant_id) {
+    public void setRestaurant_id(int restaurant_id) {
         this.restaurant_id = restaurant_id;
     }
 

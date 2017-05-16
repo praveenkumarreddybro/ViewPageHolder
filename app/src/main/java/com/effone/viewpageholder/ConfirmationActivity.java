@@ -1,0 +1,158 @@
+package com.effone.viewpageholder;
+
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.RequiresApi;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.effone.viewpageholder.adapter.OrderItemDetailsAdapter;
+import com.effone.viewpageholder.database.SqlOperation;
+import com.effone.viewpageholder.model.OrderSummary;
+import com.effone.viewpageholder.model.OrderToServer;
+import com.effone.viewpageholder.model.Order_Items;
+import com.effone.viewpageholder.model.Sample;
+import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import static com.effone.viewpageholder.common.URL.get_placed_order;
+import static com.effone.viewpageholder.common.URL.menu_url;
+
+/**
+ * Created by sumanth.peddinti on 5/15/2017.
+ */
+
+public class ConfirmationActivity extends AppCompatActivity {
+
+    private TextView mTvDateTime,mTvRestName,mTvBookingId,mTvDescription,mTvTableNo,mTvQuantits,mTvOrderTotal,mTvStatus,mTvTotalPrice;
+    private TextView mTvConfirmationMessage;
+    private ListView mLvItemQuantity,mLvTaxQuality;
+
+    private RelativeLayout mRelativeLayout;
+
+    private  SqlOperation sqliteoperation;
+    private ListView mListView;
+    private String order_id,mStatus;
+    private Gson mGson;
+    private RequestQueue mQueue;
+    private  String urls;
+    private OrderSummary mOrderToServer;
+    private OrderSummary[] mOrderToServers;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_confiramtion);
+        mGson = new Gson();
+        mQueue = Volley.newRequestQueue(this);
+        Intent intent=getIntent();
+        String jsondata=intent.getStringExtra("Order_id");
+        JSONObject myJson = null;
+        try {
+            myJson = new JSONObject(jsondata);
+            mStatus=myJson.getString("msg");
+            order_id = myJson.getString("order_id");
+                urls=get_placed_order+order_id;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+// use myJson as needed, for example
+
+        sqliteoperation = new SqlOperation(getApplicationContext());
+        sqliteoperation.open();
+     //   List<HashMap<String, String>> dictionary = sqliteoperation.getPlaceOrder(order_id);
+        sqliteoperation.close();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            init();
+        }
+
+        // sqliteoperation.updatetheCart();
+    }
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    private void init() {
+        mTvConfirmationMessage=(TextView)findViewById(R.id.tv_confiramtion_msg);
+        mTvConfirmationMessage.setText(mStatus);
+        mLvItemQuantity=(ListView)findViewById(R.id.lv_items_list);
+        mLvTaxQuality=(ListView)findViewById(R.id.lv_tax_menu);
+        mListView=(ListView)findViewById(R.id.historyView);
+        mListView.setVisibility(View.GONE);
+        mRelativeLayout=(RelativeLayout)findViewById(R.id.relativeLayout);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mRelativeLayout.setBackground(getDrawable(R.drawable.payment_background));
+        }
+        mTvDateTime=(TextView)findViewById(R.id.tv_data_time);
+        mTvRestName=(TextView)findViewById(R.id.tv_rest_name);
+        mTvBookingId=(TextView)findViewById(R.id.tv_booking_id);
+        mTvDescription=(TextView)findViewById(R.id.tv_descrption);
+        mTvTableNo=(TextView)findViewById(R.id.tv_table_no);
+        mTvQuantits=(TextView)findViewById(R.id.tv_quantitys);
+        mTvOrderTotal=(TextView)findViewById(R.id.tv_order_total);
+        mTvStatus=(TextView)findViewById(R.id.tv_order_status);
+        mTvTotalPrice=(TextView)findViewById(R.id.tv_total_price);
+        settingValues();
+    }
+
+    private void settingValues() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET,urls,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        mOrderToServers = mGson.fromJson(response, OrderSummary[].class);
+                        showingData();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(ConfirmationActivity.this,error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+        mQueue.add(stringRequest);
+
+    }
+
+    private void showingData() {
+        mTvDateTime.setText(": "+mOrderToServers[0].getDatatime());
+        mTvRestName.setText(": "+mOrderToServers[0].getRestaurant_id());
+        mTvBookingId.setText(": "+mOrderToServers[0].getOrder_id());
+        mTvOrderTotal.setText(": $ "+mOrderToServers[0].getTotal_price());
+        mTvStatus.setText(mOrderToServers[0].getStatus());
+        showingDataIntoListView();
+    }
+        SqlOperation sqlOperation;
+    private OrderItemDetailsAdapter orderItemDetails;
+    private void showingDataIntoListView() {
+            sqlOperation=new SqlOperation(this);
+            sqlOperation.open();
+            String[] values=new String[mOrderToServers[0].getItems_values().length];
+        for (int i = 0; i <values.length ; i++) {
+         values[i]= mOrderToServers[0].getItems_values()[i].getItem_id();
+        }
+        sqlOperation.close();
+      ArrayList<Order_Items> order_itemses= sqlOperation.getItemName(values);
+        mTvDescription.setText(": "+mOrderToServers[0].getDatatime());
+        mTvTableNo.setText(": "+mOrderToServers[0].getTable_no());
+        mTvQuantits.setText(": "+mOrderToServers[0].getTotal_price());
+        //orderItemDetails=new OrderItemDetailsAdapter(this,R.layout.order_summary_items,order_itemses);
+        //mLvItemQuantity.setAdapter(orderItemDetails);
+    }
+
+}

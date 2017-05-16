@@ -10,10 +10,13 @@ import android.widget.Toast;
 
 import com.effone.viewpageholder.model.CartItems;
 import com.effone.viewpageholder.model.Items;
+import com.effone.viewpageholder.model.Order_Items;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.effone.viewpageholder.database.DBConstant.COLUMN_NAME_CAT_NAME;
 import static com.effone.viewpageholder.database.DBConstant.COLUMN_NAME_FLAG;
@@ -64,7 +67,6 @@ public class SqlOperation {
             if (cursor.getCount() == 0 && kindOfOperation == 1) // if there are no elements and the operation is ADD , set QTY in  1
             {
                 ContentValues row = new ContentValues();
-                row.put(COLUMN_NAME_ID,menu_item_id);
                 row.put(COLUMN_NAME_CAT_NAME, item_cat);
                 row.put(COLUMN_NAME_SUB_CAT, sub_item_cat);
                 row.put(COLUMN_NAME_MENU_ITEM_ID, menu_item_id);
@@ -74,7 +76,7 @@ public class SqlOperation {
                 row.put(COLUMN_NAME_ITEM_QTY, quantity);
                 row.put(COLUMN_NAME_FLAG, flag);
 
-                database.insert(TABLE_NAME_ORDERITEM, null, row); //insert in DB the request
+                database.insert(TABLE_NAME_ORDERITEM , null, row); //insert in DB the request
                 values = 1;
                 //add this food with qty 1
             } else if (cursor.getCount() > 0) {
@@ -158,4 +160,49 @@ public class SqlOperation {
             database.update(TABLE_NAME_ORDERITEM, row, COLUMN_NAME_FLAG+" = 1" , null); //update qty DB the request
         }
     }
+
+    public ArrayList<Order_Items> getItemName(String[] values) {
+        String whereClouse;
+        int[] numbers = new int[values.length];
+        for(int i = 0;i < values.length;i++)
+        {
+            // Note that this is assuming valid input
+            // If you want to check then add a try/catch
+            // and another index for the numbers if to continue adding the others
+            numbers[i] = Integer.parseInt(values[i]);
+        }
+        /*inClause = inClause.replace("[", "(");
+        inClause = inClause.replace("]", ")");*/
+        ArrayList<Order_Items> cartItemses = new ArrayList<>();
+        Cursor cursor;
+        StringBuilder s=new StringBuilder();
+        for(int i = 0;i < numbers.length;i++) {
+            if (i == 0) {
+                s.append("(" + numbers[i]);
+            } else {
+                s.append("," + numbers[i]);
+            }
+            if (i == numbers.length - 1) {
+                s.append(")");
+            }
+        }
+        whereClouse=s.toString();
+
+
+
+        String select = "SELECT " + COLUMN_NAME_ITEM_NAME + " ," + COLUMN_NAME_ITEM_PRICE + " , "+ COLUMN_NAME_ITEM_QTY +"  FROM " + TABLE_NAME_ORDERITEM + " WHERE " + COLUMN_NAME_MENU_ITEM_ID + " IN " + whereClouse+";";
+        cursor = database.rawQuery(select, null);
+        if (cursor.getCount() == 0) // if there are no elements do nothing
+        {
+            Log.d(TAG, "no elements");
+        } else { //if there are elemnts
+            Order_Items order_items=new Order_Items();
+            order_items.setName(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_ITEM_NAME)));
+            order_items.setPrice(cursor.getFloat(cursor.getColumnIndex(COLUMN_NAME_ITEM_PRICE)));
+            order_items.setQuantity(cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_ITEM_QTY)));
+            cartItemses.add(order_items);
+        }
+        return cartItemses;
+    }
+
 }
