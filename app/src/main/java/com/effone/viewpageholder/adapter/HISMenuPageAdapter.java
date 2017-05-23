@@ -11,16 +11,17 @@ import com.effone.viewpageholder.common.UpdateableInterface;
 import com.effone.viewpageholder.fragment.MenuViewFragment;
 import com.effone.viewpageholder.model.Items;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class HISMenuPageAdapter extends FragmentPagerAdapter  {
 
 
-    private HashMap<String ,Items[]> mFullmenu;
+    private HashMap<String ,ArrayList<Items>> mFullmenu;
     private ViewPager mViewPager;
 
 
-    public HISMenuPageAdapter(FragmentManager fm, HashMap<String ,Items[]> mFullmenu) {
+    public HISMenuPageAdapter(FragmentManager fm, HashMap<String ,ArrayList<Items>> mFullmenu) {
         super(fm);
 
         this.mFullmenu = mFullmenu;
@@ -46,7 +47,7 @@ public class HISMenuPageAdapter extends FragmentPagerAdapter  {
     @Override
     public Fragment getItem(int position) {
         String heading = (String) (mFullmenu.keySet().toArray())[ position ];
-        Items[] hisMenuItems = mFullmenu.get( heading );
+        ArrayList<Items> hisMenuItems = mFullmenu.get( heading );
         MenuViewFragment menuViewFragment = new MenuViewFragment();
         menuViewFragment.setParentView(mViewPager);
         menuViewFragment.setHeading(heading,position);

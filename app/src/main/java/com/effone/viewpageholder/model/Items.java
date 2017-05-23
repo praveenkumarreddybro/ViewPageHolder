@@ -1,21 +1,24 @@
 package com.effone.viewpageholder.model;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+
 /**
  * Created by sumanth.peddinti on 5/10/2017.
  */
 
-public class Items
+public class Items implements Serializable
 {
-    private Content[] content;
+    private ArrayList<Content> content;
 
     private String name;
 
-    public Content[] getContent ()
+    public ArrayList<Content> getContent ()
     {
         return content;
     }
 
-    public void setContent (Content[] content)
+    public void setContent (ArrayList<Content> content)
     {
         this.content = content;
     }
@@ -30,10 +33,6 @@ public class Items
         this.name = name;
     }
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [content = "+content+", name = "+name+"]";
-    }
+
 }
 

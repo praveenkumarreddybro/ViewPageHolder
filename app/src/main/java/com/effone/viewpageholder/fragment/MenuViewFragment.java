@@ -31,7 +31,7 @@ import java.util.HashMap;
 
 public class MenuViewFragment extends Fragment implements View.OnClickListener {
     ExpandableListView expListView;
-    private Items[] mHisMenuItems;
+    private ArrayList<Items> mHisMenuItems;
     private  int position;
     private ViewPager mViewPager;
 
@@ -80,11 +80,11 @@ public class MenuViewFragment extends Fragment implements View.OnClickListener {
         mQueue = Volley.newRequestQueue(getActivity());
         sqlOperation=new SqlOperation(getActivity());
         expListView = (ExpandableListView) root.findViewById(R.id.elv_menu);
-        String[] itemsname = new String[mHisMenuItems.length];
-        HashMap<String, Content[]> mHashMap = new HashMap<>();
-        for (int i = 0; i < mHisMenuItems.length; i++) {
-            itemsname[i] = mHisMenuItems[i].getName();
-            mHashMap.put(mHisMenuItems[i].getName(), mHisMenuItems[i].getContent());
+        String[] itemsname = new String[mHisMenuItems.size()];
+        HashMap<String, ArrayList<Content>> mHashMap = new HashMap<>();
+        for (int i = 0; i < mHisMenuItems.size(); i++) {
+            itemsname[i] = mHisMenuItems.get(i).getName();
+            mHashMap.put(mHisMenuItems.get(i).getName(),mHisMenuItems.get(i).getContent());
         }
         MenuListAdpater adapter = new MenuListAdpater(getActivity(), android.R.layout.simple_list_item_1, heading, itemsname, mHashMap);
         expListView.setAdapter(adapter);
@@ -148,7 +148,7 @@ public class MenuViewFragment extends Fragment implements View.OnClickListener {
         mViewPager=pager;
     }
 
-    public void setValues(Items[] hisMenuItems) {
+    public void setValues(ArrayList<Items> hisMenuItems) {
         mHisMenuItems = hisMenuItems;
     }
 

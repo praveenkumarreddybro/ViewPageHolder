@@ -18,6 +18,7 @@ import com.effone.viewpageholder.model.Items;
 import com.effone.viewpageholder.model.Sample;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -28,8 +29,8 @@ public class MenuActivity extends AppCompatActivity {
     private RequestQueue mQueue;
     private String mJson;
     public Sample sample;
-     HashMap<String, HashMap<String ,Items[]> > list;
-    public    static HashMap<String,Items[]> pagerItems;
+     HashMap<String, HashMap<String ,ArrayList<Items> > > list;
+    public     HashMap<String,ArrayList<Items> >pagerItems;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,11 +46,13 @@ public class MenuActivity extends AppCompatActivity {
                 mJson = response;
                 sample = mGson.fromJson(mJson, Sample.class);
 
-                HashMap<String ,Items[]> pagerItem=new LinkedHashMap<>();
+                HashMap<String ,ArrayList<Items> > pagerItem=new LinkedHashMap<>();
                 list= new HashMap<>();
                 for (int i = 0; i <sample.getMenu().getMenu_type().length ; i++) {
+                    ArrayList<Items> itemses=new ArrayList<>();
                     for (int j = 0; j < sample.getMenu().getMenu_type()[i].getCategories().length; j++) {
-                        pagerItem.put(sample.getMenu().getMenu_type()[i].getCategories()[j].getName(), sample.getMenu().getMenu_type()[i].getCategories()[j].getItems());
+                        itemses=sample.getMenu().getMenu_type()[i].getCategories()[j].getItems();
+                        pagerItem.put(sample.getMenu().getMenu_type()[i].getCategories()[j].getName(),itemses);
 
                     }
                     list.put(sample.getMenu().getMenu_type()[i].getMenu_cata_type(),pagerItem);
@@ -67,7 +70,7 @@ public class MenuActivity extends AppCompatActivity {
                         // assuming string and if you want to get the value on click of list item
                         // do what you intend to do on click of listview row
                         Intent intent=new Intent(MenuActivity.this,MainActivity.class);
-                     //  intent.putExtra("map",hashMap);
+                        intent.putExtra("map",pagerItems);
                         startActivity(intent);
 
                     }

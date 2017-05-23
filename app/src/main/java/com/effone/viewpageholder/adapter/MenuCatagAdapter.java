@@ -12,6 +12,7 @@ import com.effone.viewpageholder.R;
 import com.effone.viewpageholder.model.Content;
 import com.effone.viewpageholder.model.Items;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -20,10 +21,10 @@ import java.util.HashMap;
 
 public class MenuCatagAdapter extends BaseAdapter{
     private  Context context;
-    private HashMap<String,HashMap<String,Items[]>> list;
+    private HashMap<String,HashMap<String,ArrayList<Items>>> list;
     private LayoutInflater inflater;
 
-    public MenuCatagAdapter(Context context, int simple, HashMap<String, HashMap<String, Items[]>> list) {
+    public MenuCatagAdapter(Context context, int simple, HashMap<String, HashMap<String, ArrayList<Items>>> list) {
         this.context=context;
         this.list=list;
         inflater = (LayoutInflater)context.

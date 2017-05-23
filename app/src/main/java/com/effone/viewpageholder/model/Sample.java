@@ -19,9 +19,4 @@ public class Sample
         this.Menu = Menu;
     }
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [Menu = "+Menu+"]";
-    }
 }

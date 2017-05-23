@@ -23,6 +23,7 @@ import com.effone.viewpageholder.database.SqlOperation;
 import com.effone.viewpageholder.model.Content;
 import com.effone.viewpageholder.model.Items;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -30,7 +31,7 @@ import java.util.HashMap;
  */
 
 public class MenuListAdpater extends BaseExpandableListAdapter {
-    private HashMap<String,Content[]> childItems;
+    private HashMap<String, ArrayList<Content>> childItems;
     private Context context;
     private String[] itemsname;
     private SqlOperation sqliteoperation;
@@ -38,7 +39,7 @@ public class MenuListAdpater extends BaseExpandableListAdapter {
     private UpdateableInterface updateableInterface;
 
 
-    public MenuListAdpater(@NonNull Context context, @LayoutRes int resource, String heading, String[] itemsname, @NonNull HashMap<String, Content[]> objects) {
+    public MenuListAdpater(@NonNull Context context, @LayoutRes int resource, String heading, String[] itemsname, @NonNull HashMap<String, ArrayList<Content>> objects) {
        this.heading=heading;
         this.context=context;
         this.itemsname=itemsname;
@@ -55,7 +56,7 @@ public class MenuListAdpater extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return childItems.get(itemsname[groupPosition]).length;
+        return childItems.get(itemsname[groupPosition]).size();
     }
 
     @Override
@@ -65,7 +66,7 @@ public class MenuListAdpater extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return childItems.get(itemsname[groupPosition])[childPosition];
+        return childItems.get(itemsname[groupPosition]).get(childPosition);
     }
 
 

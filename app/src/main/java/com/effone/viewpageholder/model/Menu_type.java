@@ -42,10 +42,6 @@ public class Menu_type
         this.menu_cata_type = menu_cata_type;
     }
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [categories = "+categories+", menu_cata_id = "+menu_cata_id+", menu_cata_type = "+menu_cata_type+"]";
-    }
+
 }
 

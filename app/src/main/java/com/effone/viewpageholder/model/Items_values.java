@@ -29,9 +29,5 @@ public class Items_values {
         this.item_id = item_id;
     }
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [qunatity = "+qunatity+", item_id = "+item_id+"]";
-    }
+
 }

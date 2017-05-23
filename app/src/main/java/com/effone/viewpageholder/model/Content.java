@@ -1,10 +1,12 @@
 package com.effone.viewpageholder.model;
 
+import java.io.Serializable;
+
 /**
  * Created by sumanth.peddinti on 5/10/2017.
  */
 
-public class Content {
+public class Content implements Serializable {
     private String ingredients;
 
     private int menu_item_id;
@@ -45,8 +47,5 @@ public class Content {
         this.name = name;
     }
 
-    @Override
-    public String toString() {
-        return "ClassPojo [ingredients = " + ingredients + ", menu_item_id = " + menu_item_id + ", price = " + price + ", name = " + name + "]";
-    }
+
 }

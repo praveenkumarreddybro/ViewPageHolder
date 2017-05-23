@@ -44,9 +44,5 @@ public class Menu
         this.location_id = location_id;
     }
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [menu_type = "+menu_type+", restaurant_id = "+restaurant_id+", location_id = "+location_id+"]";
-    }
+
 }

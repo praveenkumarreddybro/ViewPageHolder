@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import static com.effone.viewpageholder.MenuActivity.pagerItems;
 import static com.effone.viewpageholder.common.URL.menu_url;
 
 
@@ -49,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Intent intent = getIntent();
-       // HashMap<String, Items[]> pagerItem = (HashMap<String, Items[]>)intent.getSerializableExtra("map");
+       HashMap<String, ArrayList<Items>> pagerItem = (HashMap<String, ArrayList<Items>>)intent.getSerializableExtra("map");
         mVpMainMenu=(ViewPager)findViewById(R.id.vp_main_menu);
         mVpMainMenu.setCurrentItem(1,true);
         mTvConfirm=(TextView)findViewById(R.id.tv_confirm);
@@ -58,33 +57,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mGson = new Gson();
         mQueue = Volley.newRequestQueue(this);
         showOrderItems();
-        HISMenuPageAdapter menuPageAdapter= new HISMenuPageAdapter(getSupportFragmentManager(),pagerItems);
+        HISMenuPageAdapter menuPageAdapter= new HISMenuPageAdapter(getSupportFragmentManager(),pagerItem);
         mVpMainMenu.setAdapter(menuPageAdapter);
-  /*      StringRequest stringRequest = new StringRequest(menu_url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        mJson = response;
-                        sample = mGson.fromJson(mJson, Sample.class);
 
-                        HashMap<String ,Items[]> pagerItem=new LinkedHashMap<>();
-                    *//*    for (int i = 0; i <sample.getMenu().getCategories().length ; i++) {
-
-                            pagerItem.put(sample.getMenu().getCategories()[i].getName(),sample.getMenu().getCategories()[i].getItems());
-                        }
-                        HISMenuPageAdapter menuPageAdapter= new HISMenuPageAdapter(getSupportFragmentManager(),pagerItem);
-                        mVpMainMenu.setAdapter(menuPageAdapter);*//*
-
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MainActivity.this,error.getMessage(),Toast.LENGTH_LONG).show();
-                    }
-                });
-        mQueue.add(stringRequest);*/
 
     }
 
