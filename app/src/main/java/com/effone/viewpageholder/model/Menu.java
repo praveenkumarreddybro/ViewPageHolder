@@ -7,11 +7,22 @@ package com.effone.viewpageholder.model;
 
 public class Menu
 {
+
+    private Menu_type[] menu_type;
+
     private String restaurant_id;
 
-    private Categories[] categories;
-
     private String location_id;
+
+    public Menu_type[] getMenu_type ()
+    {
+        return menu_type;
+    }
+
+    public void setMenu_type (Menu_type[] menu_type)
+    {
+        this.menu_type = menu_type;
+    }
 
     public String getRestaurant_id ()
     {
@@ -21,16 +32,6 @@ public class Menu
     public void setRestaurant_id (String restaurant_id)
     {
         this.restaurant_id = restaurant_id;
-    }
-
-    public Categories[] getCategories ()
-    {
-        return categories;
-    }
-
-    public void setCategories (Categories[] categories)
-    {
-        this.categories = categories;
     }
 
     public String getLocation_id ()
@@ -46,6 +47,6 @@ public class Menu
     @Override
     public String toString()
     {
-        return "ClassPojo [restaurant_id = "+restaurant_id+", categories = "+categories+", location_id = "+location_id+"]";
+        return "ClassPojo [menu_type = "+menu_type+", restaurant_id = "+restaurant_id+", location_id = "+location_id+"]";
     }
 }

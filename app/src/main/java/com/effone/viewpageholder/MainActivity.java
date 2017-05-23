@@ -1,5 +1,6 @@
 package com.effone.viewpageholder;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import static com.effone.viewpageholder.MenuActivity.pagerItems;
 import static com.effone.viewpageholder.common.URL.menu_url;
 
 
@@ -46,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent intent = getIntent();
+       // HashMap<String, Items[]> pagerItem = (HashMap<String, Items[]>)intent.getSerializableExtra("map");
         mVpMainMenu=(ViewPager)findViewById(R.id.vp_main_menu);
         mVpMainMenu.setCurrentItem(1,true);
         mTvConfirm=(TextView)findViewById(R.id.tv_confirm);
@@ -54,7 +58,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mGson = new Gson();
         mQueue = Volley.newRequestQueue(this);
         showOrderItems();
-        StringRequest stringRequest = new StringRequest(menu_url,
+        HISMenuPageAdapter menuPageAdapter= new HISMenuPageAdapter(getSupportFragmentManager(),pagerItems);
+        mVpMainMenu.setAdapter(menuPageAdapter);
+  /*      StringRequest stringRequest = new StringRequest(menu_url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -62,12 +68,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         sample = mGson.fromJson(mJson, Sample.class);
 
                         HashMap<String ,Items[]> pagerItem=new LinkedHashMap<>();
-                        for (int i = 0; i <sample.getMenu().getCategories().length ; i++) {
+                    *//*    for (int i = 0; i <sample.getMenu().getCategories().length ; i++) {
 
                             pagerItem.put(sample.getMenu().getCategories()[i].getName(),sample.getMenu().getCategories()[i].getItems());
                         }
                         HISMenuPageAdapter menuPageAdapter= new HISMenuPageAdapter(getSupportFragmentManager(),pagerItem);
-                        mVpMainMenu.setAdapter(menuPageAdapter);
+                        mVpMainMenu.setAdapter(menuPageAdapter);*//*
 
 
                     }
@@ -78,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Toast.makeText(MainActivity.this,error.getMessage(),Toast.LENGTH_LONG).show();
                     }
                 });
-        mQueue.add(stringRequest);
+        mQueue.add(stringRequest);*/
 
     }
 
